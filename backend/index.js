@@ -1,14 +1,17 @@
-const express = require('express');
-const app = express();
-app.use(express.json({limit: '16kb'}));
-app.use(express.urlencoded({ extended: true }));
-
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
+const app = require("./src/app");
+const connectDB = require("./src/db/connectDB");
+const dotenv = require('dotenv')
+dotenv.config();
 
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+
+connectDB().then(() => {
+    app.listen(3000, () => {
+        console.log('Server is running on port 3000 ✔✔');
+        console.log('http://localhost:3000');
     });
-
+}).catch((err) => {
+    console.error('Failed to connect to MongoDB ✘✘.. Error:', err);
+    process.exit(1);
+}
+);
