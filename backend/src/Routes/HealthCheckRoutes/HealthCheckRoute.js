@@ -1,4 +1,5 @@
-const HealthCheck = require('../../HealtCheck/HealthCheck');
+const HealthCheck = require('../../controllers/HealthCheck');
+
 
 const healthCheckRouter = require('express').Router();
 
