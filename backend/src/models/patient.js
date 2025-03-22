@@ -19,6 +19,15 @@ const Patient = new mongoose.Schema(
         queries: {
             type: Array,
             default: []
+        },
+        medicalHistory: {
+          type: String
+        },
+        currentSymptoms: {
+            type: String
+        },
+        bodyTemperature: {
+            type: Number
         }
     },
     {

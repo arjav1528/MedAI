@@ -20,7 +20,11 @@ const Clinicain = new mongoose.Schema(
         queries: {
             type: Array,
             default: []
-        }
+        },
+        maxConcurrentQueries: {
+            type: Number,
+            default: 4
+        },
     },
     {
         timestamps: true
