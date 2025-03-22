@@ -1,4 +1,2 @@
-protobuf~=5.29.4
+gunicorn~=23.0.0
 Flask~=3.1.0
-dotenv~=0.9.9
-python-dotenv~=1.0.1
