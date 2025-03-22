@@ -1,23 +1,14 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "main.py",
-            "use": "@vercel/python"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "main.py"
-        }
-    ],
-    "buildCommand": "pip install -r requirements.txt",
-    "outputDirectory": ".",
-    "devCommand": "uvicorn main:app --host 0.0.0.0 --port 3001",
-    "functions": {
-        "api/*.py": {
-            "runtime": "python3.9"
-        }
+  "builds" : [
+    {
+      "src" : "app.py",
+      "use" : "@vercel/python"
     }
+  ],
+    "routes" : [
+        {
+        "src" : "/(.*)",
+        "dest" : "app.py"
+        }
+    ]
 }

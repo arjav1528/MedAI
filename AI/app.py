@@ -1,29 +1,33 @@
+from flask import Flask, request, jsonify
 import google.generativeai as genai
-from fastapi import FastAPI
-from pydantic import BaseModel
 import os
 import re
 from dotenv import load_dotenv
+from dataclasses import dataclass
 
 # Load environment variables from .env file
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 
-app = FastAPI()
+app = Flask(__name__)
 
 
-class Query(BaseModel):
-    patient_description: str  # User enters a paragraph describing symptoms
+@dataclass
+class Query:
+    patient_description: str
 
 
-@app.get("/")
-async def root():
+@app.route('/')
+def root():
     return {"message": "Hello World"}
 
 
-@app.post("/chat")
-async def chat_with_bot(query: Query):
+@app.route('/chat', methods=['POST'])
+def chat_with_bot():
+    data = request.get_json()
+    query = Query(patient_description=data.get('patient_description', ''))
+
     user_input = (f"A patient describes their condition as follows:\n\n"
                   f"{query.patient_description}\n\n"
                   "For each of the following categories, provide a concise paragraph (maximum 50 words each) "
@@ -48,7 +52,7 @@ async def chat_with_bot(query: Query):
     # Combine system prompt and user input
     combined_prompt = f"{system_prompt}\n\n{user_input}"
 
-    # Generate content with the correct method
+    # Generate content
     response = model.generate_content(combined_prompt)
 
     # Processing the response to structure it as JSON
@@ -89,10 +93,8 @@ async def chat_with_bot(query: Query):
         if medical_advice[key]:
             medical_advice[key] = re.sub(r'\*', '', medical_advice[key])
 
-    return medical_advice
+    return jsonify(medical_advice)
 
 
 if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=8000)
