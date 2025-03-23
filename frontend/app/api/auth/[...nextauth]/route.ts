@@ -5,6 +5,7 @@ import clientPromise, { connectToDatabase } from "@/lib/mongodb";
 import { NextAuthOptions } from "next-auth";
 import { UserRole } from "@/types";
 import { Adapter } from "next-auth/adapters";
+// Remove the import of authOptions since we're defining it locally
 
 // List of clinician emails
 const emails = {
@@ -137,6 +138,7 @@ const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
 };
+
 
 // Only export the handler functions
 const handler = NextAuth(authOptions);

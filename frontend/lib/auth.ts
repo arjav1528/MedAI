@@ -1,7 +1,8 @@
-import { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import clientPromise, { connectToDatabase } from "@/lib/mongodb";
+import { NextAuthOptions } from "next-auth";
 import { UserRole } from "@/types";
 import { Adapter } from "next-auth/adapters";
 
@@ -22,7 +23,7 @@ const whichRole = (email: string): UserRole => {
 };
 
 export const authOptions: NextAuthOptions = {
-  adapter: MongoDBAdapter(clientPromise) as Adapter, // This adapter handles user creation
+  adapter: MongoDBAdapter(clientPromise) as Adapter,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,

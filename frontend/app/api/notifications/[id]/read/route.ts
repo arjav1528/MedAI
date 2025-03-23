@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
 
@@ -14,7 +14,7 @@ export async function PUT(
   }
 
   try {
-    const notificationId = params.id;
+    const notificationId = (await params).id;
     
     // Implement your logic to mark the notification as read
     // await markNotificationAsRead(notificationId);
