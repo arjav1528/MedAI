@@ -43,12 +43,12 @@ export const NotificationProvider = ({
   const { data: session } = useSession();
 
   useEffect(() => {
-    if (session?.user?.id) {
+    if (session?.user?._id) {
       // Fetch notifications from API
       const fetchNotifications = async () => {
         try {
           const response = await fetch(
-            `/api/notifications?userId=${session.user.id}`
+            `/api/notifications?userId=${session.user._id}`
           );
           const data = await response.json();
           setNotifications(data);
@@ -66,13 +66,15 @@ export const NotificationProvider = ({
     }
   }, [session]);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = Array.isArray(notifications)
+    ? notifications.filter((n) => !n.message).length
+    : 0;
 
   const markAsRead = async (id: string) => {
     try {
       await fetch(`/api/notifications/${id}/read`, { method: "PUT" });
       setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+        prev.map((n) => (n._id === id ? { ...n, read: true } : n))
       );
     } catch (error) {
       console.error("Failed to mark notification as read:", error);

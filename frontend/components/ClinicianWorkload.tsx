@@ -17,10 +17,10 @@ export default function ClinicianWorkload() {
   }, [maxQueries, savedValue]);
 
   useEffect(() => {
-    if (session?.user?.id) {
+    if (session?.user?._id) {
       const fetchCurrentWorkload = async () => {
         try {
-          const response = await fetch(`/api/clinician/workload?clinicianId=${session.user.id}`);
+          const response = await fetch(`/api/clinician/workload?clinicianId=${session.user._id}`);
           if (response.ok) {
             const data = await response.json();
             if (data.maxQueries) {
@@ -46,18 +46,24 @@ export default function ClinicianWorkload() {
   };
 
   const handleUpdateWorkload = async () => {
-    if (!session?.user?.id) return;
+    if (!session?.user?._id){
+      toast.error("User not found");
+      return;
+    };
 
     setIsUpdating(true);
     try {
       // API call to update clinician's workload preference
+
+      console.log("local maxQueries : ", maxQueries);
+      console.log("local id : ", session.user._id);
       await fetch("/api/clinician/workload", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          clinicianId: session.user.id,
+          clinicianId: session.user._id,
           maxQueries,
         }),
       });

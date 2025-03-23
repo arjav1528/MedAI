@@ -28,7 +28,7 @@ function classNames(...classes: string[]) {
 
 export default function Header() {
   const { data: session } = useSession();
-  const { unreadCount, notifications, markAsRead } = useNotifications();
+  const { unreadCount } = useNotifications();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   
@@ -44,8 +44,8 @@ export default function Header() {
 
   const navigation = [
     { name: 'Dashboard', href: '/', current: pathname === '/' },
-    { name: 'History', href: '/query-history', current: pathname === '/query-history' },
-    ...(session?.user?.role === UserRole.CLINICIAN 
+
+    ...(session?.user?.role !== UserRole.PATIENT 
       ? [{ name: 'Clinician Portal', href: '/clinician', current: pathname === '/clinician' }] 
       : []),
   ];
@@ -91,89 +91,9 @@ export default function Header() {
               
               
               {/* Right side menu items */}
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 ">
                 {/* Desktop notification menu */}
-                <div className="hidden sm:block">
-                  <Menu as="div" className="relative">
-                    <Menu.Button className="relative flex rounded-full bg-white p-1.5 text-gray-400 hover:text-gray-500 focus:outline-none ring-1 ring-gray-200 hover:ring-gray-300 transition-all">
-                      {unreadCount > 0 && (
-                        <span className="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white ring-1 ring-white animate-pulse">
-                          {unreadCount}
-                        </span>
-                      )}
-                      <BellIcon className="h-5 w-5" aria-hidden="true" />
-                    </Menu.Button>
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="absolute right-0 z-10 mt-2 w-80 origin-top-right rounded-xl bg-white py-2 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden">
-                        <div className="px-4 py-3 text-sm font-medium text-gray-700 border-b flex justify-between items-center">
-                          <span>Notifications</span>
-                          {notifications.length > 0 && (
-                            <button 
-                              className="text-xs text-blue-600 hover:text-blue-800 transition-colors duration-150"
-                              onClick={() => notifications.forEach(n => markAsRead(n.id))}
-                            >
-                              Mark all as read
-                            </button>
-                          )}
-                        </div>
-                        <div className="max-h-72 overflow-y-auto">
-                          {notifications.length === 0 ? (
-                            <div className="px-4 py-6 text-sm text-gray-500 flex flex-col items-center justify-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                              </svg>
-                              <p>No notifications</p>
-                            </div>
-                          ) : (
-                            notifications.map((notification) => (
-                              <Menu.Item key={notification.id}>
-                                {({ active }) => (
-                                  <div
-                                    className={classNames(
-                                      active ? "bg-gray-50" : "",
-                                      notification.read ? "bg-white" : "bg-blue-50",
-                                      "px-4 py-3 text-sm text-gray-700 border-b cursor-pointer transition-colors duration-150"
-                                    )}
-                                    onClick={() => markAsRead(notification.id)}
-                                  >
-                                    <div className="flex items-start">
-                                      <div className="flex-shrink-0 mr-3 mt-1">
-                                        {!notification.read && (
-                                          <div className="h-2 w-2 rounded-full bg-blue-600"></div>
-                                        )}
-                                      </div>
-                                      <div className="flex-1">
-                                        <p className="font-medium leading-tight mb-1">
-                                          {notification.message}
-                                        </p>
-                                        <p className="text-xs text-gray-500">
-                                          {new Date(notification.createdAt).toLocaleString()}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-                              </Menu.Item>
-                            ))
-                          )}
-                        </div>
-                        <div className="px-4 py-2 text-center border-t">
-                          <Link href="/notifications" className="text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors duration-150">
-                            View all notifications
-                          </Link>
-                        </div>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
-                </div>
+                
                 
                 {/* Desktop profile menu */}
                 <div className="hidden sm:block">
@@ -241,22 +161,7 @@ export default function Header() {
                           </div>
                         </div>
                         
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              href="/profile"
-                              className={classNames(
-                                active ? "bg-gray-50" : "",
-                                "flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                              )}
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                              </svg>
-                              Profile Settings
-                            </Link>
-                          )}
-                        </Menu.Item>
+                        
                         
                         <Menu.Item>
                           {({ active }) => (

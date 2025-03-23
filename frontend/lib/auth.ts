@@ -5,7 +5,6 @@ import clientPromise, { connectToDatabase } from "@/lib/mongodb";
 import { NextAuthOptions } from "next-auth";
 import { UserRole } from "@/types";
 import { Adapter } from "next-auth/adapters";
-// Remove the import of authOptions since we're defining it locally
 
 // List of clinician emails
 const emails = {
@@ -23,9 +22,8 @@ const whichRole = (email: string): UserRole => {
   return UserRole.PATIENT;
 };
 
-// Define the options but don't export them
-const authOptions: NextAuthOptions = {
-  adapter: MongoDBAdapter(clientPromise) as Adapter, // This adapter handles user creation
+export const authOptions: NextAuthOptions = {
+  adapter: MongoDBAdapter(clientPromise) as Adapter,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -138,8 +136,3 @@ const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
 };
-
-
-// Only export the handler functions
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };

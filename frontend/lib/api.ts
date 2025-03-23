@@ -1,61 +1,59 @@
 import axios from "axios";
 import { Query } from "@/types";
+import { UserRole } from "@/types";
 
 const api = axios.create({
-  baseURL: process.env.API_URL || "http://localhost:8000/api",
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Add auth token to requests
-api.interceptors.request.use(
-  async (config) => {
-    // You can add token logic here if needed
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+export const submitQuery = async (queryData: Query) => {
+  try {
+    const response = await api.post("/queries", queryData);
+    return response.data;
+  } catch (error) {
+    console.error("Error details:", error);
+    throw error;
   }
-);
-
-export const submitQuery = async (
-  queryData: Omit<
-    Query,
-    "id" | "createdAt" | "updatedAt" | "clinicianVerified" | "aiResponse"
-  >
-) => {
-  const response = await api.post("/queries", queryData);
-  return response.data;
 };
 
 export const getQueries = async (userId: string, role: string) => {
-  const response = await api.get(
-    `/queries?${role === "clinician" ? "" : `patientId=${userId}`}`
-  );
-  return response.data;
+  try {
+    // Fix the endpoint construction based on role
+    const endpoint =
+      role === UserRole.PATIENT ? `/queries?patientId=${userId}` : "/queries";
+
+    const response = await api.get(endpoint);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching queries:", error);
+    throw error;
+  }
 };
 
 export const verifyQuery = async (
   queryId: string,
   clinicianId: string,
   clinicianName: string,
-  modifiedResponse?: string
+  approved: boolean,
+  modifiedResponse?: string,
+  reassignTo?: string
 ) => {
-  const response = await api.put(`/queries/${queryId}/verify`, {
-    clinicianId,
-    clinicianName,
-    modifiedResponse,
-  });
-  return response.data;
-};
-
-export const triggerSOS = async (
-  userId: string,
-  location: { lat: number; lng: number }
-) => {
-  const response = await api.post("/sos", { userId, location });
-  return response.data;
+  try {
+    const response = await api.put(`/queries/${queryId}/verify`, {
+      clinicianId,
+      clinicianName,
+      approved,
+      modifiedResponse,
+      reassignTo,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying query:", error);
+    throw error;
+  }
 };
 
 export default api;

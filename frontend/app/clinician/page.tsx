@@ -11,17 +11,17 @@ export default function ClinicianPage() {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
-    return null;
+    
   }
 
   if (!session) {
     redirect("/auth/signin");
-    return null;
+    
   }
 
-  if (session.user?.role !== UserRole.CLINICIAN) {
+  if (session.user?.role === UserRole.PATIENT) {
     redirect("/");
-    return null;
+    
   }
 
   return (

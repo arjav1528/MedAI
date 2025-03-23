@@ -35,5 +35,12 @@
     "eslint-config-next": "15.2.3",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "rules": {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "off"
+  },
+  "errors": {
+    "routeError": "Type error: Route \"app/api/notifications/[id]/read/route.ts\" has an invalid \"PUT\" export: Type \"{ params: { id: string; }; }\" is not a valid type for the function's second argument."
   }
 }
