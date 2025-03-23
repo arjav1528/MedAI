@@ -28,11 +28,25 @@ export default function SignInPage() {
   }, []);
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/" });
+      setIsLoading(true);
+      
+      // Use NextAuth's signIn function to initiate Google authentication
+      const result = await signIn("google", {
+        callbackUrl: "/dashboard", // Where to redirect after successful authentication
+        redirect: true,            // Whether to automatically redirect the user
+      });
+
+      console.log("Sign in result:", result?.status);
+      
+      // If signIn returns a result (won't happen with redirect: true)
+      if (result?.error) {
+        console.error("Authentication error:", result.error);
+        // You could set an error state here to display to the user
+      }
     } catch (error) {
       console.error("Sign in error:", error);
+    } finally {
       setIsLoading(false);
     }
   };

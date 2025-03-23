@@ -1,9 +1,24 @@
+import mongoose, { Schema } from "mongoose";
 import { DefaultSession } from "next-auth";
+// Andrologist, Cardiologist, Dermatologist, Gastroenterologist, Pulmonologist, Nephrologist, Hepatologist, Rheumatologist, Endocrinologist, Neurologist, Ophthalmologist, Otolaryngologist (ENT) ,Urologist, General Practitioner (GP) ,Pediatrician
 
 export enum UserRole {
-  USER = "user",
-  CLINICIAN = "clinician",
-  ADMIN = "admin",
+  PATIENT = "patient",
+  ANDROLOGIST = "andrologist",
+  CARDIOLOGIST = "cardiologist",
+  DERMATOLOGIST = "dermatologist",
+  GASTROENTEROLOGIST = "gastroenterologist",
+  PULMONOLOGIST = "pulmonologist",
+  NEPHROLOGIST = "nephrologist",
+  HEPATOLOGIST = "hepatologist",
+  RHEUMATOLOGIST = "rheumatologist",
+  ENDOCRINOLOGIST = "endocrinologist",
+  NEUROLOGIST = "neurologist",
+  OPHTHALMOLOGIST = "ophthalmologist",
+  OTOLARYNGOLOGIST = "otolaryngologist",
+  UROLOGIST = "urologist",
+  GENERAL_PRACTITIONER = "general_practitioner",
+  PEDIATRICIAN = "pediatrician",
 }
 
 declare module "next-auth" {
@@ -13,7 +28,7 @@ declare module "next-auth" {
 
   interface Session {
     user: {
-      id: string;
+      _id: string;
       role: UserRole;
     } & DefaultSession["user"];
   }
@@ -21,42 +36,62 @@ declare module "next-auth" {
 
 declare module "next-auth/jwt" {
   interface JWT {
-    id: string;
+    _id: string;
     role: UserRole;
   }
 }
 
 export interface User {
-  id: string;
-  name: string;
+  _id: string
+  displayName: string;
   email: string;
-  image?: string;
+  pfpUrl: string;
   role: UserRole;
-  maxQueries?: number;
+  maxQueries: number;
+  patientQueries: Array<Query>;
+  refreshToken?: string;
+
 }
 
 export interface Query {
-  id: string;
   patientId: string;
-  patientName: string;
-  symptoms: string;
-  duration: string;
-  temperature?: string;
-  medicalHistory?: string;
-  additionalInfo?: string;
-  aiResponse?: string;
-  clinicianVerified: boolean;
   clinicianId?: string;
-  clinicianName?: string;
-  createdAt: string;
-  updatedAt: string;
+  label?: string;
+  query: string;
+  response: string;
+  approved: boolean;
+  date: string;
 }
 
 export interface Notification {
-  id: string;
+  _id: string;
   userId: string;
   message: string;
-  read: boolean;
-  createdAt: string;
 }
+
+
+export const UserSchema : Schema = new mongoose.Schema({
+  displayName: { type: String, required: true },
+  email: { type: String, required: true },
+  pfpUrl: { type: String, required: true },
+  role: { type: String, required: true },
+  maxQueries: { type: Number, required: true },
+  patientQueries: { type: Array, required: true },
+  refreshToken: { type: String },
+})
+
+export const NotificationSchema : Schema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  message: { type: String, required: true },
+});
+
+export const QuerySchema : Schema = new mongoose.Schema({
+  patientId: { type: String, required: true },
+  clinicianId: { type: String },
+  label: { type: String },
+  query: { type: String, required: true },
+  response: { type: String, required: true },
+  approved: { type: Boolean, required: true },
+  date: { type: String, required: true },
+})
 
