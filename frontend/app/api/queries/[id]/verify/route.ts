@@ -1,4 +1,3 @@
-// app/api/queries/[id]/verify/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { connectToDatabase } from "@/lib/mongodb";
@@ -46,7 +45,6 @@ export async function PUT(
     // Update object
     const updateData: any = {
       clinicianId,
-      responseStatus: approved ? "approved" : "ready",
     };
 
     // If reassigning to another clinician
@@ -56,6 +54,7 @@ export async function PUT(
     } else if (approved) {
       // If approving with a modified response
       updateData.approved = true;
+      updateData.responseStatus = "approved";
       if (modifiedResponse) {
         updateData.response = modifiedResponse;
       }
@@ -99,4 +98,3 @@ export async function PUT(
     );
   }
 }
-

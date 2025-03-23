@@ -60,7 +60,7 @@ export interface Query {
   query: string;
   response: string;
   aiResponse?: any;
-  responseStatus: "waiting" | "ready" | "approved";
+  responseStatus: "waiting" | "ready" | "approved" | "error";
   approved: boolean;
   date: string;
 }

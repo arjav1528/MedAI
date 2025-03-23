@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       query: queryData.query,
       response: "",
       aiResponse: null,
-      responseStatus: "waiting",
+      responseStatus: "waiting", // Initial status is waiting
       approved: false,
       date: queryData.date || new Date().toISOString(),
     };
@@ -79,7 +79,9 @@ export async function POST(request: Request) {
     }
 
     // Send the query to the AI service asynchronously
-    fetchAIResponse(insertedQuery._id, queryData.query, queriesCollection);
+    if (insertedQuery) {
+      fetchAIResponse(insertedQuery._id, queryData.query, queriesCollection);
+    }
 
     return NextResponse.json({
       success: true,
@@ -106,7 +108,7 @@ async function fetchAIResponse(
 ) {
   try {
     // Call the AI service
-    const response = await axios.post("https://medai-pkqz.onrender.com/", {
+    const response = await axios.post("https://medai-pkqz.onrender.com/chat", {
       patient_description: patientDescription,
     });
 
