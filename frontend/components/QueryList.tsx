@@ -5,14 +5,12 @@ import { useSession } from "next-auth/react";
 import { getQueries } from "@/lib/api";
 import { Query, UserRole } from "@/types";
 import QueryResponseCard from "./QueryResponseCard";
-import { useRouter } from "next/navigation";
 
 export default function QueryList() {
   const { data: session } = useSession();
   const [queries, setQueries] = useState<Query[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchQueries = async () => {
@@ -20,11 +18,7 @@ export default function QueryList() {
 
       try {
         setLoading(true);
-        const data = await getQueries(
-          session.user._id,
-          session.user.role as string
-        );
-        console.log("Fetched queries:", data);
+        const data = await getQueries(session.user._id, session.user.role);
         setQueries(data);
         setError(null);
       } catch (err) {
@@ -36,47 +30,26 @@ export default function QueryList() {
     };
 
     fetchQueries();
-  }, [session, router]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center p-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+    // Set up polling for patients to check for updates
+    let interval: NodeJS.Timeout | null = null;
+    if (session?.user?.role === UserRole.PATIENT) {
+      interval = setInterval(fetchQueries, 10000); // Poll every 10 seconds
+    }
 
-  if (error) {
-    return (
-      <div className="text-center p-8 text-red-500">
-        <p>{error}</p>
-        <button
-          onClick={() => router.refresh()}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [session]);
 
-  if (queries.length === 0) {
-    return (
-      <div className="text-center p-8 text-gray-500">
-        <h3 className="text-xl font-semibold mb-2">No Queries Yet</h3>
-        <p>
-          {session?.user?.role === UserRole.PATIENT
-            ? "You haven't submitted any health queries yet."
-            : "There are no queries assigned to you at the moment."}
-        </p>
-      </div>
-    );
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (queries.length === 0) return <div>No queries found.</div>;
 
   return (
-    <div className="space-y-6">
+    <div>
       {queries.map((query) => (
-        <QueryResponseCard key={query._id?.toString()} query={query} />
+        <QueryResponseCard key={query._id} query={query} />
       ))}
     </div>
   );

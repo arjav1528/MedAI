@@ -59,6 +59,8 @@ export interface Query {
   label?: string;
   query: string;
   response: string;
+  aiResponse?: any;
+  responseStatus: "waiting" | "ready" | "approved";
   approved: boolean;
   date: string;
 }
@@ -85,13 +87,15 @@ export const NotificationSchema : Schema = new mongoose.Schema({
   message: { type: String, required: true },
 });
 
-export const QuerySchema : Schema = new mongoose.Schema({
+export const QuerySchema: Schema = new mongoose.Schema({
   patientId: { type: String, required: true },
   clinicianId: { type: String },
   label: { type: String },
   query: { type: String, required: true },
   response: { type: String, required: true },
-  approved: { type: Boolean, required: true },
+  aiResponse: { type: Object },
+  responseStatus: { type: String, required: true, default: "waiting" },
+  approved: { type: Boolean, required: true, default: false },
   date: { type: String, required: true },
-})
+});
 
