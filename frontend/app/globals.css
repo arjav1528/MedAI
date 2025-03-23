@@ -1,0 +1,46 @@
+@import "tailwindcss";
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 245, 245, 245;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+.prose {
+  @apply max-w-none;
+}
+
+.prose p {
+  @apply my-2;
+}
+
+.prose ul {
+  @apply list-disc pl-5 my-2;
+}
+
+.prose ol {
+  @apply list-decimal pl-5 my-2;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  @apply font-bold my-3;
+}
+
+.prose h1 {
+  @apply text-2xl;
+}
+
+.prose h2 {
+  @apply text-xl;
+}
+
+.prose h3 {
+  @apply text-lg;
+}
+
+.prose h4 {
+  @apply text-base;
+}
