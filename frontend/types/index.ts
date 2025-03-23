@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import { DefaultSession } from "next-auth";
-// Andrologist, Cardiologist, Dermatologist, Gastroenterologist, Pulmonologist, Nephrologist, Hepatologist, Rheumatologist, Endocrinologist, Neurologist, Ophthalmologist, Otolaryngologist (ENT) ,Urologist, General Practitioner (GP) ,Pediatrician
 
 export enum UserRole {
   PATIENT = "patient",
@@ -54,6 +53,7 @@ export interface User {
 }
 
 export interface Query {
+  _id?: string;
   patientId: string;
   clinicianId?: string;
   label?: string;
@@ -74,7 +74,7 @@ export const UserSchema : Schema = new mongoose.Schema({
   displayName: { type: String, required: true },
   email: { type: String, required: true },
   pfpUrl: { type: String, required: true },
-  role: { type: String, required: true },
+  role: { type: String, required: true, default: UserRole.PATIENT },
   maxQueries: { type: Number, required: true },
   patientQueries: { type: Array, required: true },
   refreshToken: { type: String },
