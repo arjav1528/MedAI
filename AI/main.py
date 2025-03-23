@@ -1,8 +1,12 @@
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 import google.generativeai as genai
 import os
 import re
 from dotenv import load_dotenv
+import uvicorn
 
 # Load environment variables
 load_dotenv()
@@ -14,33 +18,38 @@ if GEMINI_API_KEY:
 else:
     print("Warning: GEMINI_API_KEY not found in environment variables")
 
-# Initialize Flask app
-app = Flask(__name__)
+# Initialize FastAPI app
+app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
-@app.route('/', methods=['GET'])
-def home():
-    return jsonify({"message": "Medical Assistant API is running"})
+class PatientQuery(BaseModel):
+    patient_description: str
 
 
-@app.route('/api/chat', methods=['POST'])
-def chat():
+@app.get("/")
+async def root():
+    return {"message": "Medical Assistant API is running"}
+
+
+@app.post("/api/chat")
+async def chat(query: PatientQuery):
     try:
-        # Get JSON data from request
-        data = request.get_json()
-
-        if not data or 'patient_description' not in data:
-            return jsonify({"error": "Missing patient_description in request"}), 400
-
-        patient_description = data['patient_description']
-
         # Check if API key is configured
         if not GEMINI_API_KEY:
-            return jsonify({"error": "API key not configured"}), 500
+            raise HTTPException(status_code=500, detail="API key not configured")
 
         # Prepare prompt for Gemini
         user_input = (f"A patient describes their condition as follows:\n\n"
-                      f"{patient_description}\n\n"
+                      f"{query.patient_description}\n\n"
                       "For each of the following categories, provide a concise paragraph (maximum 50 words each) "
                       "about the patient's condition:\n\n"
                       "1. Common Causes: Summarize the most likely medical conditions responsible for these symptoms.\n"
@@ -103,13 +112,22 @@ def chat():
             if medical_advice[key]:
                 medical_advice[key] = re.sub(r'\*', '', medical_advice[key])
 
-        return jsonify(medical_advice)
+        return medical_advice
 
     except Exception as e:
         print(f"Error: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Error handler
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": exc.detail},
+    )
 
 
 # For local development only - not used in Vercel
 if __name__ == "__main__":
-    app.run(debug=True)
+    uvicorn.run("index:app", host="0.0.0.0", port=8000, reload=True)
