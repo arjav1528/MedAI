@@ -154,6 +154,7 @@ export default function QueryForm() {
         response: "",
         approved: false,
         date: new Date().toISOString(),
+        responseStatus: "approved"
       });
 
       toast.success("Your query has been submitted successfully!");
@@ -185,8 +186,23 @@ export default function QueryForm() {
     if (activeVoiceField) {
       setFormData((prev) => ({
         ...prev,
-        [activeVoiceField]: text,
+        // Append to existing text rather than replacing it
+        [activeVoiceField]: prev[activeVoiceField] ? 
+          `${prev[activeVoiceField]} ${text}` : text
       }));
+      
+      // Clear the error if it exists
+      if (errors[activeVoiceField]) {
+        setErrors(prev => ({
+          ...prev,
+          [activeVoiceField]: undefined
+        }));
+      }
+      
+      // Show success toast
+      toast.success(`Voice input added to ${activeVoiceField.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+      
+      // Reset active field
       setActiveVoiceField(null);
     }
   };
