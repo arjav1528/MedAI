@@ -11,7 +11,6 @@ const emails = {
   ANDROLOGIST: "arjav1528@gmail.com",
   CARDIOLOGIST: "priyanshutalwar@gmail.com",
   DERMATOLOGIST: "sohamdas.2702@gmail.com",
-  PATIENT: "f20231140@goa.bits-pilani.ac.in",
 };
 
 const whichRole = (email: string): UserRole => {
@@ -48,7 +47,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token._id = user.id;
-        token.role = user.role || UserRole.PATIENT;
+        token.role = user.role;
       }
       return token;
     },
