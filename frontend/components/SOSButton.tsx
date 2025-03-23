@@ -16,7 +16,7 @@ export default function SOSButton() {
     try {
       // Get user's current location just for verification that permissions work
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
+        async (_position) => {
           // Simulate a short delay for better user experience
           setTimeout(() => {
             toast.success(

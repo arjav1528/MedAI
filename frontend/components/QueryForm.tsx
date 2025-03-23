@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 import VoiceInput from "./VoiceInput";
 import { useRouter } from "next/navigation";
 import {
-  Playfair_Display,
   Roboto,
   Open_Sans,
   Roboto_Mono,
@@ -192,7 +191,7 @@ export default function QueryForm() {
     }
   };
 
-  // Render microphone button
+  // Render microphone button with improved functionality
   const renderMicButton = (
     fieldName: keyof QueryFormData,
     position: string
@@ -200,15 +199,17 @@ export default function QueryForm() {
     <button
       type="button"
       onClick={() => setActiveVoiceField(fieldName)}
-      className={`absolute ${position} flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-all duration-200 transform hover:scale-105`}
+      className={`absolute ${position} flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-all duration-200 transform hover:scale-105 z-10 ${
+        activeVoiceField === fieldName ? "bg-red-100 text-red-600 animate-pulse" : ""
+      }`}
       aria-label={`Voice input for ${fieldName}`}
     >
-      🎤
+      {activeVoiceField === fieldName ? "🔴" : "🎤"}
     </button>
   );
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl mx-auto">
+    <form onSubmit={handleSubmit} className="space-y-8 w-full">
       {/* Form header with elegant styling */}
       <h2 className={`${playfair.className} text-2xl font-bold text-gray-800`}>
         Health Consultation
@@ -237,46 +238,50 @@ export default function QueryForm() {
         </h3>
 
         {/* Symptoms field */}
-        <div className="relative">
+        <div className="relative pb-2">
           <label
             htmlFor="symptoms"
             className={`${openSans.className} block text-sm font-medium text-gray-700 mb-1`}
           >
             Current Symptoms *
           </label>
-          <textarea
-            id="symptoms"
-            name="symptoms"
-            value={formData.symptoms}
-            onChange={handleChange}
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Describe your symptoms in detail..."
-          ></textarea>
-          {renderMicButton("symptoms", "right-3 bottom-3")}
+          <div className="relative">
+            <textarea
+              id="symptoms"
+              name="symptoms"
+              value={formData.symptoms}
+              onChange={handleChange}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-12"
+              placeholder="Describe your symptoms in detail..."
+            ></textarea>
+            {renderMicButton("symptoms", "right-3 bottom-3")}
+          </div>
           {errors.symptoms && (
             <p className="mt-1 text-sm text-red-600">{errors.symptoms}</p>
           )}
         </div>
 
         {/* Duration field */}
-        <div className="relative">
+        <div className="relative pb-2">
           <label
             htmlFor="duration"
             className={`${openSans.className} block text-sm font-medium text-gray-700 mb-1`}
           >
             Duration of Symptoms *
           </label>
-          <input
-            type="text"
-            id="duration"
-            name="duration"
-            value={formData.duration}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="How long have you been experiencing these symptoms?"
-          />
-          {renderMicButton("duration", "right-3 top-1/2 -translate-y-1/2")}
+          <div className="relative">
+            <input
+              type="text"
+              id="duration"
+              name="duration"
+              value={formData.duration}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-12"
+              placeholder="How long have you been experiencing these symptoms?"
+            />
+            {renderMicButton("duration", "right-3 top-1/2 -translate-y-1/2")}
+          </div>
           {errors.duration && (
             <p className="mt-1 text-sm text-red-600">{errors.duration}</p>
           )}
@@ -293,23 +298,25 @@ export default function QueryForm() {
         </h3>
 
         {/* Temperature field */}
-        <div className="relative">
+        <div className="relative pb-2">
           <label
             htmlFor="temperature"
             className={`${openSans.className} block text-sm font-medium text-gray-700 mb-1`}
           >
             Body Temperature
           </label>
-          <input
-            type="text"
-            id="temperature"
-            name="temperature"
-            value={formData.temperature}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Your current body temperature (if known)"
-          />
-          {renderMicButton("temperature", "right-3 top-1/2 -translate-y-1/2")}
+          <div className="relative">
+            <input
+              type="text"
+              id="temperature"
+              name="temperature"
+              value={formData.temperature}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-12"
+              placeholder="Your current body temperature (if known)"
+            />
+            {renderMicButton("temperature", "right-3 top-1/2 -translate-y-1/2")}
+          </div>
         </div>
 
         {/* Two-column layout for desktop */}

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Oleo_Script, Montserrat } from "next/font/google";
-import Image from "next/image";
 
 const oleo = Oleo_Script({
   weight: "400",

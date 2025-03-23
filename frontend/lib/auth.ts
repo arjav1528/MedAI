@@ -1,8 +1,7 @@
-import NextAuth from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import clientPromise, { connectToDatabase } from "@/lib/mongodb";
-import { NextAuthOptions } from "next-auth";
 import { UserRole } from "@/types";
 import { Adapter } from "next-auth/adapters";
 
@@ -22,8 +21,7 @@ const whichRole = (email: string): UserRole => {
   return UserRole.PATIENT;
 };
 
-// Define the options but don't export them
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise) as Adapter, // This adapter handles user creation
   providers: [
     GoogleProvider({
@@ -137,7 +135,3 @@ const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
 };
-
-// Only export the handler functions
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };

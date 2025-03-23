@@ -54,10 +54,10 @@ export default function HomePage() {
 
           {/* Content with proper contrast */}
           <div className="relative z-10 text-white">
-            <h1 className="text-3xl font-bold mb-2 drop-shadow-sm">
+            <h1 className="text-4xl font-bold mb-3 drop-shadow-sm">
               Hello, {session.user?.name?.split(" ")[0] || "there"}!
             </h1>
-            <p className="text-lg opacity-90 drop-shadow-sm">
+            <p className="text-xl opacity-90 drop-shadow-sm">
               How can I assist with your health today?
             </p>
           </div>
@@ -70,10 +70,10 @@ export default function HomePage() {
           }`}
         >
           <div className="bg-white rounded-xl shadow-md p-6 transition-all hover:shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-5 flex items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 mr-2 text-blue-500"
+                className="h-7 w-7 mr-3 text-blue-500 flex-shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -87,9 +87,14 @@ export default function HomePage() {
               </svg>
               Ask a Health Question
             </h2>
-            <QueryForm />
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            
+            {/* Added container with proper padding and spacing */}
+            <div className="overflow-hidden px-1">
+              <QueryForm />
+            </div>
+            
+            <div className="mt-10">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-5">
                 Your Health Queries
               </h2>
               <QueryList />

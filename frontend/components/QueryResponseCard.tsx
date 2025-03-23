@@ -59,6 +59,7 @@ export default function QueryResponseCard({ query }: QueryResponseCardProps) {
       }
       return <p className="text-gray-600">{responseText}</p>;
     } catch (e) {
+      console.error(e)
       // If not JSON, just render as text
       return <p className="text-gray-600">{responseText}</p>;
     }

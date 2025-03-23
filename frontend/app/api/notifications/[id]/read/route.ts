@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
+// import { markNotificationAsRead } from "@/lib/notifications";
 
 export async function PUT(
   request: NextRequest,
@@ -12,9 +13,18 @@ export async function PUT(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const notificationId = params.id;
-
-  // In a real application, you would update the notification in a database
-  // This is a mock implementation
-  return NextResponse.json({ success: true });
+  try {
+    const notificationId = params.id;
+    
+    // Implement your logic to mark the notification as read
+    // await markNotificationAsRead(notificationId);
+    
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    return NextResponse.json(
+      { error: "Failed to mark notification as read" },
+      { status: 500 }
+    );
+  }
 }
