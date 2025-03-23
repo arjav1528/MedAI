@@ -1,7 +1,29 @@
+import { DefaultSession } from "next-auth";
+
 export enum UserRole {
-  PATIENT = "patient",
+  USER = "user",
   CLINICIAN = "clinician",
   ADMIN = "admin",
+}
+
+declare module "next-auth" {
+  interface User {
+    role: UserRole; // Changed from role?: UserRole to make it consistent
+  }
+
+  interface Session {
+    user: {
+      id: string;
+      role: UserRole;
+    } & DefaultSession["user"];
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    role: UserRole;
+  }
 }
 
 export interface User {
@@ -10,6 +32,7 @@ export interface User {
   email: string;
   image?: string;
   role: UserRole;
+  maxQueries?: number;
 }
 
 export interface Query {
@@ -36,3 +59,4 @@ export interface Notification {
   read: boolean;
   createdAt: string;
 }
+

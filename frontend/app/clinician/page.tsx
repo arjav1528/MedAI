@@ -26,19 +26,23 @@ export default function ClinicianPage() {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          Clinician Portal
-        </h1>
+      <div className="min-h-screen bg-gradient-to-b from-white to-blue-50">
+        <div className="max-w-4xl mx-auto p-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-8 border-b pb-4">
+            Clinician Portal
+          </h1>
 
-        <div className="space-y-8">
-          <ClinicianWorkload />
+          <div className="space-y-10">
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <ClinicianWorkload />
+            </div>
 
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Patient Queries Awaiting Review
-            </h2>
-            <QueryList />
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Patient Queries Awaiting Review
+              </h2>
+              <QueryList />
+            </div>
           </div>
         </div>
       </div>

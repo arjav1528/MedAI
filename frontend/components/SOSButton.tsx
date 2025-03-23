@@ -28,6 +28,7 @@ export default function SOSButton() {
             "SOS alert sent successfully! Emergency services have been notified."
           );
           setShowConfirmation(false);
+          setIsTriggering(false);
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -49,7 +50,8 @@ export default function SOSButton() {
       <button
         type="button"
         onClick={() => setShowConfirmation(true)}
-        className="fixed bottom-6 right-6 z-10 rounded-full bg-red-600 p-4 text-white shadow-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+        className="fixed bottom-6 right-6 z-10 rounded-full bg-red-600 p-4 text-white shadow-lg hover:bg-red-700 hover:scale-110 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer"
+        aria-label="Emergency SOS"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

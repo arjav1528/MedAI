@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify
-import google.generativeai as genai
+from flask import Flask, request, jsonify # type: ignore
+import google.generativeai as genai # type: ignore
 import os
 import re
-from dotenv import load_dotenv
+from dotenv import load_dotenv # type: ignore
 from dataclasses import dataclass
 
 # Load environment variables from .env file
