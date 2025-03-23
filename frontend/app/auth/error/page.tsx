@@ -38,7 +38,7 @@ export default function ErrorPage() {
     <Suspense fallback={
       <div className="flex min-h-screen flex-col items-center justify-center p-4">
         <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-md">
-          <h1 className="mb-4 text-2xl font-bold">Loading...</h1>
+          <h1 className="mb-4 text-2xl font-bold">Loading..</h1>
           <p>Please wait while we process your request.</p>
         </div>
       </div>
