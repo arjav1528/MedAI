@@ -1,6 +1,6 @@
-// lib/api.ts (updated)
 import axios from "axios";
 import { Query } from "@/types";
+import { UserRole } from "@/types";
 
 const api = axios.create({
   baseURL: "/api",
@@ -21,8 +21,9 @@ export const submitQuery = async (queryData: Query) => {
 
 export const getQueries = async (userId: string, role: string) => {
   try {
+    // Fix the endpoint construction based on role
     const endpoint =
-      role === "patient" ? `/queries?patientId=${userId}` : "/queries";
+      role === UserRole.PATIENT ? `/queries?patientId=${userId}` : "/queries";
 
     const response = await api.get(endpoint);
     return response.data;
@@ -37,17 +38,22 @@ export const verifyQuery = async (
   clinicianId: string,
   clinicianName: string,
   approved: boolean,
-  modifiedResponse?: string
+  modifiedResponse?: string,
+  reassignTo?: string
 ) => {
-  const response = await api.put(`/queries/${queryId}/verify`, {
-    clinicianId,
-    clinicianName,
-    approved,
-    modifiedResponse,
-  });
-  return response.data;
+  try {
+    const response = await api.put(`/queries/${queryId}/verify`, {
+      clinicianId,
+      clinicianName,
+      approved,
+      modifiedResponse,
+      reassignTo,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying query:", error);
+    throw error;
+  }
 };
-
-
 
 export default api;

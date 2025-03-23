@@ -66,7 +66,9 @@ export const NotificationProvider = ({
     }
   }, [session]);
 
-  const unreadCount = notifications.filter((n) => !n.message).length;
+  const unreadCount = Array.isArray(notifications)
+    ? notifications.filter((n) => !n.message).length
+    : 0;
 
   const markAsRead = async (id: string) => {
     try {
