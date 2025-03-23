@@ -5,23 +5,26 @@ import { useSession } from "next-auth/react";
 import { getQueries } from "@/lib/api";
 import { Query, UserRole } from "@/types";
 import QueryResponseCard from "./QueryResponseCard";
+import { useRouter } from "next/navigation";
 
 export default function QueryList() {
   const { data: session } = useSession();
   const [queries, setQueries] = useState<Query[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchQueries = async () => {
-      if (!session?.user?.id) return;
+      if (!session?.user?._id) return;
 
       try {
         setLoading(true);
         const data = await getQueries(
-          session.user.id,
+          session.user._id,
           session.user.role as string
         );
+        console.log("Fetched queries:", data);
         setQueries(data);
         setError(null);
       } catch (err) {
@@ -33,11 +36,11 @@ export default function QueryList() {
     };
 
     fetchQueries();
-  }, [session]);
+  }, [session, router]);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-10">
+      <div className="flex justify-center items-center p-8">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -45,17 +48,23 @@ export default function QueryList() {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-        {error}
+      <div className="text-center p-8 text-red-500">
+        <p>{error}</p>
+        <button
+          onClick={() => router.refresh()}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Try Again
+        </button>
       </div>
     );
   }
 
   if (queries.length === 0) {
     return (
-      <div className="bg-white shadow sm:rounded-lg p-6 text-center">
-        <h3 className="text-lg font-medium text-gray-900">No Queries Yet</h3>
-        <p className="mt-1 text-sm text-gray-500">
+      <div className="text-center p-8 text-gray-500">
+        <h3 className="text-xl font-semibold mb-2">No Queries Yet</h3>
+        <p>
           {session?.user?.role === UserRole.PATIENT
             ? "You haven't submitted any health queries yet."
             : "There are no queries assigned to you at the moment."}
@@ -67,16 +76,7 @@ export default function QueryList() {
   return (
     <div className="space-y-6">
       {queries.map((query) => (
-        <QueryResponseCard
-          key={query.id}
-          query={query}
-          isClinicianView={session?.user?.role === UserRole.CLINICIAN}
-          onQueryUpdated={(updatedQuery) => {
-            setQueries((prev) =>
-              prev.map((q) => (q.id === updatedQuery.id ? updatedQuery : q))
-            );
-          }}
-        />
+        <QueryResponseCard key={query._id?.toString()} query={query} />
       ))}
     </div>
   );

@@ -2,7 +2,7 @@ import axios from "axios";
 import { Query } from "@/types";
 
 const api = axios.create({
-  baseURL: process.env.API_URL || "http://localhost:8000/api",
+  baseURL: "http://localhost:3000/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -20,14 +20,17 @@ api.interceptors.request.use(
 );
 
 export const submitQuery = async (
-  queryData: Omit<
-    Query,
-    "id" | "createdAt" | "updatedAt" | "clinicianVerified" | "aiResponse"
-  >
+  queryData: Query
 ) => {
-  const response = await api.post("/queries", queryData);
-  return response.data;
+  try {
+    const response = await api.post("/queries", queryData);
+    return response.data;
+  } catch (error) {
+    console.error("Error details:", error);
+    throw error;
+  }
 };
+
 
 export const getQueries = async (userId: string, role: string) => {
   const response = await api.get(

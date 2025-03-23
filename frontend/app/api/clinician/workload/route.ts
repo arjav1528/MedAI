@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     }
     
     // Get database connection
-    const db = await connectToDatabase("medai");
+    const db = await connectToDatabase();
     const usersCollection = db.collection("users");
     
     // Log the user ID types to debug
